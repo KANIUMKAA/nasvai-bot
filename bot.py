@@ -1,5 +1,11 @@
-import json, time, secrets, string
+import json, time, secrets, string, logging
 import urllib.request as ur
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%H:%M:%S"
+)
 
 # ── CONFIG ────────────────────────────────────────────────────────────────────
 BOT_TOKEN       = "8742859803:AAGrm360Y2ACoIdkmMp527xB10sEglSyb1w"
@@ -234,7 +240,7 @@ def on_message(chat_id, uid, name, text=None, photo=None):
 
 # ── Polling ───────────────────────────────────────────────────────────────────
 def run():
-    print("Bot started")
+    logging.info("Bot started")
     offset = 0
     while True:
         try:
@@ -249,6 +255,7 @@ def run():
                         cid  = cb["message"]["chat"]["id"]
                         mid  = cb["message"]["message_id"]
                         answer_cb(cb["id"])
+                        logging.info(f"CB uid={uid} data={cb['data']}")
                         on_callback(cid, mid, uid, name, cb["data"])
 
                     elif "message" in upd:
@@ -257,14 +264,15 @@ def run():
                         name = msg["from"].get("first_name", "User")
                         cid  = msg["chat"]["id"]
                         text = msg.get("text")
-                        # беремо file_id останнього (найбільшого) фото
                         photo = None
                         if "photo" in msg:
                             photo = msg["photo"][-1]["file_id"]
+                        logging.info(f"MSG uid={uid} text={text!r} photo={'yes' if photo else 'no'}")
                         on_message(cid, uid, name, text, photo)
-                except Exception:
-                    pass
-        except Exception:
+                except Exception as e:
+                    logging.exception(f"Update error: {e}")
+        except Exception as e:
+            logging.warning(f"Polling error: {e}")
             time.sleep(3)
 
 if __name__ == "__main__":
