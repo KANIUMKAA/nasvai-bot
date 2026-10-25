@@ -1,8 +1,13 @@
 name: Run Bot
+
 on:
   workflow_dispatch:
   schedule:
     - cron: '*/5 * * * *'
+
+concurrency:
+  group: bot
+  cancel-in-progress: true
 
 jobs:
   run:
