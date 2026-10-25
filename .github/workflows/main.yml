@@ -13,4 +13,4 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install requests
-      - run: timeout 270 python bot.py || true
+      - run: timeout 350 python bot.py || true
