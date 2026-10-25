@@ -246,7 +246,7 @@ def run():
         try:
             r = tg("getUpdates", offset=offset, timeout=30)
             for upd in r.get("result", []):
-                offset = upd["id"] + 1
+                offset = upd["update_id"] + 1
                 try:
                     if "callback_query" in upd:
                         cb   = upd["callback_query"]
